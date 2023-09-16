@@ -1,0 +1,107 @@
+import 'package:flutter/material.dart';
+import 'package:angle_game/widgets/emailicon.dart';
+
+class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
+
+  List<int> ids = [1,2,3,4,5,6,7,8];
+  Widget text = Text('One two three',
+                style: TextStyle(
+                  color:Colors.white,
+                ),);
+  AnimationController? animationController;
+  OverlayEntry? overlayEntry;
+  GlobalKey globalKey = GlobalKey();
+
+  _showOverlay() async{
+    OverlayState? overlayState = Overlay.of(context);
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: MediaQuery.of(context).size.width * 0.1,
+        top: MediaQuery.of(context).size.height * 0.80,
+        child: text,
+      )
+    );
+    animationController!.addListener(() {
+      overlayState!.setState(() {});
+    });
+    animationController!.forward();
+    overlayState!.insert(overlayEntry!);
+
+    await Future.delayed(const Duration(seconds: 5))
+        .whenComplete(() => animationController!.reverse())
+        .whenComplete(() => overlayEntry!.remove());
+  }
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image:
+              AssetImage('assets/napoleon_wave_2.jpg'),
+              fit:BoxFit.cover,
+            ),
+          ),
+          child: Center(
+            child: Column(
+              children: [
+                SizedBox(
+                  width: 1058,
+                  child: Wrap(
+                    children: ids.map((id) => EmailIcon(id,globalKey, _showOverlay())).toList(),
+                  ),
+                ),
+              ],
+            ),
+          )
+        )
+      )
+    );
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class EmailIcon extends StatelessWidget {
+
+  int id = 0;
+  Future<dynamic> func;
+  Color color = Colors.white;
+  GlobalKey? globalKey;
+
+  EmailIcon(this.id, this.globalKey, this.func);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left:40.0, right:40),
+      child: Column(
+        children: [
+          IconButton(
+            key: globalKey!,
+            onPressed: (){
+              func;
+            },
+            icon: Icon(Icons.mail),
+            iconSize: 150,
+            tooltip: '放入文件地址',
+            color: color,
+          ),
+          Text('Mail $id',
+            style: TextStyle(
+            color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
