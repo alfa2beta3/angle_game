@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:angle_game/widgets/emailicon.dart';
 import 'package:angle_game/widgets/dialog.dart';
+import 'package:angle_game/widgets/readlink.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class _MainPageState extends State<MainPage>{
 
   List<int> ids = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
   String submitted = '';
-  bool empty = true;
+  bool empty = true; // need to be disposed
 
   late TextEditingController _controller;
 
@@ -32,6 +33,14 @@ class _MainPageState extends State<MainPage>{
     overlayEntry = null;
   }
 
+  bool getEmpty(){
+    bool empty = true;
+    return empty;
+  }
+
+  void updateEmpty(boolean){
+  }
+
   void handleSubmission(){
     print ('handle message');
     setState(() {
@@ -44,9 +53,7 @@ class _MainPageState extends State<MainPage>{
   void disposeMessage(){
     print ('dispose message');
     deleteInDatabase();
-    setState(() {
-      empty = true;
-    });
+    dispose();
   }
 
   @override
@@ -79,24 +86,43 @@ class _MainPageState extends State<MainPage>{
                       () {
                           // Remove the existing OverlayEntry.
                           removeHighlightOverlay();
-
                           assert(overlayEntry == null);
+                       if (empty == true) {
+                         overlayEntry = OverlayEntry(
+                           // Create a new OverlayEntry.
+                           builder: (BuildContext context) {
+                             return dialog(
+                                 empty: empty,
+                                 context: context,
+                                 dispose: () {
+                                   dispose();
+                                 },
+                                 controller: _controller,
+                                 submit: () {
+                                   handleSubmission();
+                                 }
+                             );
+                           },
+                         );
+                       }
+                       else
+                         {
+                         overlayEntry = OverlayEntry(
+                         // Create a new OverlayEntry.
+                         builder: (BuildContext context) {
+                           return readLink(
+                             empty: empty,
+                             context: context,
+                             dispose: () {
+                               disposeMessage();
+                             },
+                             link: 'https:test.com',
+                           );
+                         });
+                         }
 
-                        overlayEntry = OverlayEntry(
-                          // Create a new OverlayEntry.
-                          builder: (BuildContext context) {
-                            // Align is used to position the highlight overlay
-                            // relative to the NavigationBar destination.
-                            return dialog(
-                                empty: empty,
-                                context:context,
-                                dispose:(){ dispose(); },
-                              controller: _controller,
-                                submit: (){ handleSubmission(); },
-                                delete: (){ disposeMessage(); },
-                            );
-                          },
-                        );
+
+
 
                           // Add the OverlayEntry to the Overlay.
                           Overlay.of(context, debugRequiredFor: widget)!.insert(overlayEntry!);
