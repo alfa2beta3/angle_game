@@ -11,7 +11,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>{
 
-  List<int> ids = [1,2,3,4,5,6,7,8];
+  List<int> ids = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
 
   OverlayEntry? overlayEntry;
 
@@ -41,37 +41,39 @@ class _MainPageState extends State<MainPage>{
             ),
           ),
           child: Center(
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 1058,
-                  child: Wrap(
-                    children: ids.map((id) => EmailIcon(id:id, func:
-                    () {
-                        // Remove the existing OverlayEntry.
-                        removeHighlightOverlay();
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: 1058,
+                    child: Wrap(
+                      children: ids.map((id) => EmailIcon(id:id, func:
+                      () {
+                          // Remove the existing OverlayEntry.
+                          removeHighlightOverlay();
 
-                        assert(overlayEntry == null);
+                          assert(overlayEntry == null);
 
-                        overlayEntry = OverlayEntry(
-                          // Create a new OverlayEntry.
-                          builder: (BuildContext context) {
-                            // Align is used to position the highlight overlay
-                            // relative to the NavigationBar destination.
-                            return dialog(context:context, dispose:
-                            (){
-                              dispose();
-                            });
-                          },
-                        );
+                          overlayEntry = OverlayEntry(
+                            // Create a new OverlayEntry.
+                            builder: (BuildContext context) {
+                              // Align is used to position the highlight overlay
+                              // relative to the NavigationBar destination.
+                              return dialog(context:context, dispose:
+                              (){
+                                dispose();
+                              });
+                            },
+                          );
 
-                        // Add the OverlayEntry to the Overlay.
-                        Overlay.of(context, debugRequiredFor: widget)!.insert(overlayEntry!);
-                      }
-                    )).toList(),
+                          // Add the OverlayEntry to the Overlay.
+                          Overlay.of(context, debugRequiredFor: widget)!.insert(overlayEntry!);
+                        }
+                      )).toList(),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           )
         )
