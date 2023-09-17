@@ -11,7 +11,18 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>{
 
+
   List<int> ids = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+  String submitted = '';
+  bool empty = true;
+
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
 
   OverlayEntry? overlayEntry;
 
@@ -19,6 +30,23 @@ class _MainPageState extends State<MainPage>{
   void removeHighlightOverlay() {
     overlayEntry?.remove();
     overlayEntry = null;
+  }
+
+  void handleSubmission(){
+    print ('handle message');
+    setState(() {
+      empty = false;
+    });
+  }
+
+  void deleteInDatabase(){}
+
+  void disposeMessage(){
+    print ('dispose message');
+    deleteInDatabase();
+    setState(() {
+      empty = true;
+    });
   }
 
   @override
@@ -54,17 +82,21 @@ class _MainPageState extends State<MainPage>{
 
                           assert(overlayEntry == null);
 
-                          overlayEntry = OverlayEntry(
-                            // Create a new OverlayEntry.
-                            builder: (BuildContext context) {
-                              // Align is used to position the highlight overlay
-                              // relative to the NavigationBar destination.
-                              return dialog(context:context, dispose:
-                              (){
-                                dispose();
-                              });
-                            },
-                          );
+                        overlayEntry = OverlayEntry(
+                          // Create a new OverlayEntry.
+                          builder: (BuildContext context) {
+                            // Align is used to position the highlight overlay
+                            // relative to the NavigationBar destination.
+                            return dialog(
+                                empty: empty,
+                                context:context,
+                                dispose:(){ dispose(); },
+                              controller: _controller,
+                                submit: (){ handleSubmission(); },
+                                delete: (){ disposeMessage(); },
+                            );
+                          },
+                        );
 
                           // Add the OverlayEntry to the Overlay.
                           Overlay.of(context, debugRequiredFor: widget)!.insert(overlayEntry!);
